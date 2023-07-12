@@ -10,7 +10,7 @@ function G_N = get_G_N(N)
 %   G_N will be an N by N binary matrix. The polar encoding kernal process
 %   may be performed according to d = mod(u*G_N,2).
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

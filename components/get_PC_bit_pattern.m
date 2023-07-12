@@ -33,7 +33,7 @@ function PC_bit_pattern = get_PC_bit_pattern(info_bit_pattern, Q_N, n_PC, n_PC_w
 %   PC bits within the input to the polar encoder kernal.
 
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

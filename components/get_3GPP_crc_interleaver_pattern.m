@@ -14,7 +14,7 @@ function Pi = get_3GPP_crc_interleaver_pattern(K)
 %   deinterleaving is implemented accoring to 
 %   b_hat(Pi) = c_hat.
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

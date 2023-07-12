@@ -30,7 +30,7 @@ function [rate_matching_pattern, mode] = get_3GPP_rate_matching_pattern(K, N, E)
 %   case of 'shortening' these excluded bits are guaranteed to have values
 %   of 0.
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

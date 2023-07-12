@@ -43,7 +43,7 @@ function main_FAR(code, A, E, L, min_sum, target_false_alarms, seed)
 %
 %   See also MAIN_BLER_VS_SNR and MAIN_SNR_VS_A
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you
 % can redistribute it and/or modify it under the terms of the GNU General
 % Public License as published by the Free Software Foundation, either
 % version 3 of the License, or (at your option) any later version. This

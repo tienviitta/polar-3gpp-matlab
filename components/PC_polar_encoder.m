@@ -32,7 +32,7 @@ function e = PC_polar_encoder(a, info_bit_pattern, PC_bit_pattern, PC_circular_b
 %
 %   See also PC_POLAR_DECODER
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

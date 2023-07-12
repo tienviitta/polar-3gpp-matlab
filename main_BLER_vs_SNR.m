@@ -57,7 +57,7 @@ function main_BLER_vs_SNR(code, A, E, L, min_sum, target_block_errors, target_BL
 %
 %   See also MAIN_SNR_VS_A and MAIN_FAR
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you
 % can redistribute it and/or modify it under the terms of the GNU General
 % Public License as published by the Free Software Foundation, either
 % version 3 of the License, or (at your option) any later version. This

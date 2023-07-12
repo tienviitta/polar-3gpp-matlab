@@ -25,7 +25,7 @@ function info_bit_pattern = get_info_bit_pattern(I, Q_N, rate_matching_pattern)
 %   information bit arrangement can be achieved according to
 %   u(info_bit_pattern) = a.
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

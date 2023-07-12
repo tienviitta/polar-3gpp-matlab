@@ -2,7 +2,7 @@ function PM_i = phi(PM_iminus1,L_i,u_i)
 % Implements equations (11b) and (12) from Balatsoukas-Stimming...
 % http://dx.doi.org/10.1109/TSP.2015.2439211
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

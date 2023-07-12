@@ -35,7 +35,7 @@ function e = DCA_polar_encoder(a, crc_polynomial_pattern, crc_interleaver_patter
 %
 %   See also DCA_POLAR_DECODER
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

@@ -31,7 +31,7 @@ function [rate_matching_pattern, mode] = get_NATS_rate_matching_pattern(N,E)
 %   See also GET_BIVP_RATE_MATCHING_PATTERN, GET_BIVS_RATE_MATCHING_PATTERN 
 %   and GET_NATP_RATE_MATCHING_PATTERN
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
+% Copyright Â© 2017 Robert G. Maunder. This program is free software: you 
 % can redistribute it and/or modify it under the terms of the GNU General 
 % Public License as published by the Free Software Foundation, either 
 % version 3 of the License, or (at your option) any later version. This 

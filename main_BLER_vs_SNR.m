@@ -149,7 +149,8 @@ for A_index = 1:length(A)
                 while keep_going && block_error_counts(end) < target_block_errors
 
                     % Generate a random block of bits
-                    a = round(rand(1,A(A_index)));
+                    %a = round(rand(1,A(A_index)));
+                    a = [1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1];
 
                     % Perform polar encoding
                     f = feval([code,'_encoder'], a, E(E_index));

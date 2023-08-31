@@ -1,7 +1,7 @@
 % Message
-A = 13*16;
+A = 3*17;
 msg = round(rand(A, 1));
-l_msg = length(msg); % Note! Should be divisible with step!
+l_msg = length(msg);
 
 % The CRC polynomial used with CA-polar in 3GPP PUCCH channel is
 % D^11 + D^10 + D^9 + D^5 + 1
@@ -35,22 +35,28 @@ disp("enc: crc_m:")
 disp(crc_m)
 
 % Compute CRC in 'step' size blocks
+n_pad = ceil(l_msg / step) * step - l_msg
+z_msg = [zeros(n_pad, 1); msg];
+l_msg = length(z_msg);
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
-  p_msg = msg(i*step+1:(i+1)*step);
+  p_msg = z_msg(i*step+1:(i+1)*step);
   crc_s = mod(crc_m * mod(crc_s + p_msg, 2), 2); % Note! Zero rows?!
 end
 disp("enc: crc_s:")
 disp(transpose(crc_s))
 
 % Attach CRC
-r_msg = [msg; crc_s]; % Note! If m < w then m - w zeros added at receiver!
+r_msg = [msg; crc_s(1:l_crc-1)];
 l_msg = length(r_msg);
 
 %i_err = randi(A);
 %r_msg(i_err) = not(r_msg(i_err)); % Note! Introduce a bit error to the msg!
 
 % Compute CRC in step size blocks
+n_pad = ceil(l_msg / step) * step - l_msg
+r_msg = [zeros(n_pad, 1); r_msg];
+l_msg = length(r_msg);
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
   p_msg = r_msg(i*step+1:(i+1)*step);

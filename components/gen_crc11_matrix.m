@@ -1,20 +1,22 @@
 % Message
-A = 3*8;
-msg = round(rand(A, 1))
+A = 3*16;
+msg = round(rand(A, 1));
 l_msg = length(msg); % Note! Should be divisible with step!
 
-% The CRC polynomial used with PCCA-polar in 3GPP PUCCH channel is
-% D^6 + D^5 + 1
-crc6 = [1 1 0 0 0 0 1];
-l_crc = length(crc6)
-poly = transpose(crc6);
+% The CRC polynomial used with CA-polar in 3GPP PUCCH channel is
+% D^11 + D^10 + D^9 + D^5 + 1
+crc11 = [1 1 1 0 0 0 1 0 0 0 0 1];
+l_crc = length(crc11);
+poly = transpose(crc11);
 
 % Reference CRC
-G_P = get_crc_generator_matrix(A, crc6)
-crc_ref = mod(transpose(msg) * G_P,2)
+G_P = get_crc_generator_matrix(A, crc11);
+crc_ref = mod(transpose(msg) * G_P, 2);
+disp("ref: crc_s:")
+disp(crc_ref)
 
 % Add zeros to the end to make size step
-step = 8;
+step = 16;
 poly = [poly; zeros(step-l_crc,1)];
 
 % Add identity matrix as in
@@ -28,15 +30,18 @@ crc_m(1:step-1,1) = poly(2:end);
 
 % Calculate matrix^step. Then the result matrix will do steps of CRC with
 % one matrix-vector multiplication
-crc_m = mod(crc_m^step,2)
+crc_m = mod(crc_m ^ step,2);
+disp("enc: crc_m:")
+disp(crc_m)
 
-% Compute CRC
+% Compute CRC in 'step' size blocks
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
   p_msg = msg(i*step+1:(i+1)*step);
-  crc_s = mod(crc_m * mod(crc_s + p_msg, 2), 2);
+  crc_s = mod(crc_m * mod(crc_s + p_msg, 2), 2); % Note! Zero rows?!
 end
-crc_s
+disp("enc: crc_s:")
+disp(transpose(crc_s))
 
 % Attach CRC
 r_msg = [msg; crc_s]; % Note! If m < w then m - w zeros added at receiver!
@@ -45,23 +50,25 @@ l_msg = length(r_msg);
 %i_err = randi(A);
 %r_msg(i_err) = not(r_msg(i_err)); % Note! Introduce a bit error to the msg!
 
-% Compute CRC
+% Compute CRC in step size blocks
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
   p_msg = r_msg(i*step+1:(i+1)*step);
-  crc_s = mod(crc_m * mod(crc_s + p_msg, 2), 2);
+  crc_s = mod(crc_m * mod(crc_s + p_msg, 2), 2); % Note! Zero rows?!
 end
-crc_s
+disp("dec: crc_s:")
+disp(transpose(crc_s))
 
-% LUT for DSP implementation
+% LUT for DSP (bit-by-bit) PUCCH encoder implementation
 matrix_values = uint32(zeros(step,1));
 for i = 1:step
     row = crc_m(i,:);
     value = 0;
     for j=1:step
-        value = value + row(j)*2^(j-1); % Leftmost bit is interpreted as LSB
+        value = value + row(j)*2^(j-1); % Note! Leftmost bit is interpreted as LSB!
     end
     matrix_values(i) = value;
 end
-dec2hex(matrix_values)
+disp("lut:")
+disp(dec2hex(matrix_values))
 

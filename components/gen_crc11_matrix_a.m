@@ -1,22 +1,31 @@
 % Message
-A = 3*17;
-msg = round(rand(A, 1));
+%A = 3*17;
+%msg = round(rand(A, 1));
+msg = [
+  1; 0; 1; 0; 1; 1; 0; 1; 1; 0; 1; 1; 0; 0; 0; 0;
+  1; 0; 1; 0; 1; 1; 1; 1; 0; 0; 1; 0; 1; 1; 0; 1;
+  0; 1; 1; 1; 0; 1; 1; 0; 0; 1; 1; 1; 1; 0; 1; 1;
+  0; 0; 1; 0; 0; 0; 1; 1; 0; 0; 1; 1; 1; 0; 0; 1;
+  1; 1; 0; 1; 1; 1; 0; 1; 0; 1; 0; 1; 1; 1; 1; 1;
+  1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 1; 1; 0; 0; 0;
+];
 l_msg = length(msg);
 
 % The CRC polynomial used with CA-polar in 3GPP PUCCH channel is
 % D^11 + D^10 + D^9 + D^5 + 1
+%        1 0 9 8 7 6 5 4 3 2 1 0
 crc11 = [1 1 1 0 0 0 1 0 0 0 0 1];
 l_crc = length(crc11);
 poly = transpose(crc11);
 
 % Reference CRC
-G_P = get_crc_generator_matrix(A, crc11);
+G_P = get_crc_generator_matrix(l_msg, crc11);
 crc_ref = mod(transpose(msg) * G_P, 2);
 disp("ref: crc_s:")
 disp(crc_ref)
 
 % Add zeros to the end to make size step
-step = 16;
+step = 32;
 poly = [poly; zeros(step-l_crc,1)];
 
 % Add identity matrix as in
@@ -53,7 +62,7 @@ l_msg = length(r_msg);
 %i_err = randi(A);
 %r_msg(i_err) = not(r_msg(i_err)); % Note! Introduce a bit error to the msg!
 
-% Compute CRC in step size blocks
+% Compute CRC in 'step' size blocks
 n_pad = ceil(l_msg / step) * step - l_msg
 r_msg = [zeros(n_pad, 1); r_msg];
 l_msg = length(r_msg);

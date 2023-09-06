@@ -34,5 +34,5 @@ for i = 1:32
     end
     matrix_values(i) = value;
 end
-matrix_values
+dec2hex(matrix_values)
 

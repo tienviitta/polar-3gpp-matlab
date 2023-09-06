@@ -1,5 +1,3 @@
-clc
-
 % Message
 %A = 3*17;
 %msg = round(rand(A, 1));
@@ -15,14 +13,14 @@ msg = [
 l_msg = length(msg);
 
 % The CRC polynomial used with CA-polar in 3GPP PUCCH channel is
-% D^11 + D^10 + D^9 + D^5 + 1
-%        1 0 9 8 7 6 5 4 3 2 1 0
-crc11 = [1 1 1 0 0 0 1 0 0 0 0 1];
-l_crc = length(crc11);
-poly = transpose(crc11);
+% D^16 + D^12 + D^5 +  1
+%        6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+crc16 = [1 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 1];
+l_crc = length(crc16);
+poly = transpose(crc16);
 
 % Reference CRC
-G_P = get_crc_generator_matrix(l_msg, crc11);
+G_P = get_crc_generator_matrix(l_msg, crc16);
 crc_ref = mod(transpose(msg) * G_P, 2);
 printf("ref: crc_s: ");
 printf("%d", transpose(fliplr(crc_ref)));
@@ -44,7 +42,7 @@ crc_m(1:step-1,1) = poly(2:end);
 % Calculate matrix^step. Then the result matrix will do steps of CRC with
 % one matrix-vector multiplication
 crc_m = mod(crc_m ^ step,2);
-%disp("enc: crc_m:")
+disp("enc: crc_m:")
 %disp(crc_m)
 
 % Compute CRC in 'step' size blocks
@@ -54,28 +52,8 @@ l_msg = length(z_msg);
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
   p_msg = z_msg(i*step+1:(i+1)*step);
-  printf("enc: p_msg: ");
-  printf("%d", fliplr(transpose(p_msg)));
-  printf("\n");
-  crc_p = xor(crc_s, p_msg);
-  printf("enc: crc_p: ");
-  printf("%d", fliplr(transpose(crc_p)));
-  printf("\n");
-  %crc_s = mod(crc_m * crc_p, 2); % Note! Zero rows?!
-  for j = 1:step
-    crc_v = and(transpose(crc_m(j,:)), crc_p);
-    crc_s(j) = mod(sum(crc_v), 2);
-    printf("enc: crc_m(%d,:): ", j);
-    printf("%d", fliplr(crc_m(j,:)));
-    printf("\n");
-    printf("enc: crc_v(%d,:): ", j);
-    printf("%d", flipud(crc_v));
-    printf("\n");
-  endfor
-  printf("enc: crc_s: ");
-  printf("%d", fliplr(transpose(crc_s)));
-  printf("\n");
-endfor
+  crc_s = mod(crc_m * mod(crc_s + p_msg, 2), 2); % Note! Zero rows?!
+end
 printf("enc: crc_s: ");
 printf("%d", fliplr(transpose(crc_s(1:l_crc-1))));
 printf("\n");
@@ -94,12 +72,8 @@ l_msg = length(r_msg);
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
   p_msg = r_msg(i*step+1:(i+1)*step);
-  crc_p = xor(crc_s, p_msg);
-  %crc_s = mod(crc_m * crc_p, 2); % Note! Zero rows?!
-  for j = 1:step
-    crc_s(j) = mod(sum(and(transpose(crc_m(j,:)), crc_p)), 2);
-  endfor
-endfor
+  crc_s = mod(crc_m * mod(crc_s + p_msg, 2), 2); % Note! Zero rows?!
+end
 printf("dec: crc_s: ");
 printf("%d", fliplr(transpose(crc_s(1:l_crc-1))));
 printf("\n");
@@ -116,4 +90,9 @@ for i = 1:step
 end
 disp("lut:")
 disp(dec2hex(matrix_values))
+
+
+
+% 0x11191911  00010001000110010001100100010001
+% 0x11303471  00010001001100000011010001110001
 

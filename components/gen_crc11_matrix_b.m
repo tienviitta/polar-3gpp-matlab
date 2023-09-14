@@ -1,7 +1,7 @@
 clc
 
 % Message
-%A = 3*17;
+%A = 1234;
 %msg = round(rand(A, 1));
 % Fixed message for CEVA XC6 DSP SW evaluation
 msg = [
@@ -48,31 +48,32 @@ crc_m = mod(crc_m ^ step,2);
 %disp(crc_m)
 
 % Compute CRC in 'step' size blocks
-n_pad = ceil(l_msg / step) * step - l_msg
+n_pad = ceil(l_msg / step) * step - l_msg;
+printf("enc: pad: %d\n", n_pad);
 z_msg = [zeros(n_pad, 1); msg];
 l_msg = length(z_msg);
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
   p_msg = z_msg(i*step+1:(i+1)*step);
-  printf("enc: p_msg: ");
+  printf("enc: p_msg(%d): ", i);
   printf("%d", fliplr(transpose(p_msg)));
   printf("\n");
   crc_p = xor(crc_s, p_msg);
-  printf("enc: crc_p: ");
+  printf("enc: crc_p(%d): ", i);
   printf("%d", fliplr(transpose(crc_p)));
   printf("\n");
   %crc_s = mod(crc_m * crc_p, 2); % Note! Zero rows?!
   for j = 1:step
     crc_v = and(transpose(crc_m(j,:)), crc_p);
     crc_s(j) = mod(sum(crc_v), 2);
-    printf("enc: crc_m(%d,:): ", j);
-    printf("%d", fliplr(crc_m(j,:)));
-    printf("\n");
-    printf("enc: crc_v(%d,:): ", j);
-    printf("%d", flipud(crc_v));
-    printf("\n");
+%    printf("enc: crc_m(%d,:): ", j);
+%    printf("%d", fliplr(crc_m(j,:)));
+%    printf("\n");
+%    printf("enc: crc_v(%d,:): ", j);
+%    printf("%d", flipud(crc_v));
+%    printf("\n");
   endfor
-  printf("enc: crc_s: ");
+  printf("enc: crc_s(%d): ", i);
   printf("%d", fliplr(transpose(crc_s)));
   printf("\n");
 endfor
@@ -89,20 +90,37 @@ l_msg = length(r_msg);
 
 % Compute CRC in 'step' size blocks
 n_pad = ceil(l_msg / step) * step - l_msg
+printf("dec: pad: %d\n", n_pad);
 r_msg = [zeros(n_pad, 1); r_msg];
 l_msg = length(r_msg);
 crc_s = zeros(step, 1);
 for i = 0:(l_msg / step) - 1
   p_msg = r_msg(i*step+1:(i+1)*step);
+  printf("dec: p_msg(%d): ", i);
+  printf("%d", fliplr(transpose(p_msg)));
+  printf("\n");
   crc_p = xor(crc_s, p_msg);
+  printf("dec: crc_p(%d): ", i);
+  printf("%d", fliplr(transpose(crc_p)));
+  printf("\n");
   %crc_s = mod(crc_m * crc_p, 2); % Note! Zero rows?!
   for j = 1:step
-    crc_s(j) = mod(sum(and(transpose(crc_m(j,:)), crc_p)), 2);
+%    crc_s(j) = mod(sum(and(transpose(crc_m(j,:)), crc_p)), 2);
+    crc_v = and(transpose(crc_m(j,:)), crc_p);
+    crc_s(j) = mod(sum(crc_v), 2);
   endfor
+  printf("dec: crc_s(%d): ", i);
+  printf("%d", fliplr(transpose(crc_s)));
+  printf("\n");
 endfor
 printf("dec: crc_s: ");
 printf("%d", fliplr(transpose(crc_s(1:l_crc-1))));
 printf("\n");
+if sum(crc_s(1:l_crc-1)) == 0
+  printf("dec: PASS\n");
+else
+  printf("dec: FAIL\n");
+endif
 
 % LUT for DSP (bit-by-bit) PUCCH encoder implementation
 matrix_values = uint32(zeros(step,1));
@@ -114,6 +132,6 @@ for i = 1:step
     end
     matrix_values(i) = value;
 end
-disp("lut:")
-disp(dec2hex(matrix_values))
+%disp("lut:")
+%disp(dec2hex(matrix_values))
 

@@ -78,8 +78,10 @@ if nargin == 0
 ##    EsN0_start = -25;
 ##    EsN0_delta = 0.5;
     code = 'PUCCH';
-    A = [12];
-    E = [28];
+%    A = [12];
+%    E = [28];
+    A = [24];
+    E = [56];
     L = 4;
     min_sum = true;
     target_block_errors = 10;

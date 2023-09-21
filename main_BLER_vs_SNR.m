@@ -80,8 +80,8 @@ if nargin == 0
     code = 'PUCCH';
 %    A = [12];
 %    E = [28];
-    A = [24];
-    E = [56];
+    A = [85];
+    E = [123];
     L = 4;
     min_sum = true;
     target_block_errors = 10;

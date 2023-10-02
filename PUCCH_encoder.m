@@ -16,7 +16,7 @@ function f = PUCCH_encoder(a, G)
 %
 %   a should be a binary row vector comprising A number of bits, each
 %   having the value 0 or 1, where A should be in the range 12 to 1706. The first
-%   input bit corresponds to a_0 from Sections 6.3.1.2 and 6.3.2.2 of TS38.212, 
+%   input bit corresponds to a_0 from Sections 6.3.1.2 and 6.3.2.2 of TS38.212,
 %   while the last input bit corresponds to a_A-1.
 %
 %   G should be an integer scalar. It specifies the number of bits in the
@@ -24,8 +24,8 @@ function f = PUCCH_encoder(a, G)
 %   and no greater than 16384 if A>=360.
 %
 %   f will be a binary row vector comprising G number of bits, each having
-%   the value 0 or 1. The first output bit corresponds to g_0 from Sections 
-%   6.3.1.5 and 6.3.2.5 of TS38.212, while the last output bit 
+%   the value 0 or 1. The first output bit corresponds to g_0 from Sections
+%   6.3.1.5 and 6.3.2.5 of TS38.212, while the last output bit
 %   corresponds to g_G-1.
 %
 %   See also PUCCH_DECODER
@@ -46,27 +46,27 @@ A = length(a);
 if A < 12
     error('polar_3gpp_matlab:UnsupportedBlockLength','A should be no less than 12.');
 elseif A > 1706
-    error('polar_3gpp_matlab:UnsupportedBlockLength','A should be no greater than 1706.');    
+    error('polar_3gpp_matlab:UnsupportedBlockLength','A should be no greater than 1706.');
 elseif A <= 19 % Use PCCA-polar
     % The CRC polynomial used with PCCA-polar in 3GPP PUCCH channel is
     % D^6 + D^5 + 1
     crc_polynomial_pattern = [1 1 0 0 0 0 1];
-    
+
     % Use one segment
     C = 1;
 else % Use CA-polar
     % The CRC polynomial used with CA-polar in 3GPP PUCCH channel is
     % D^11 + D^10 + D^9 + D^5 + 1
     crc_polynomial_pattern = [1 1 1 0 0 0 1 0 0 0 0 1];
-    
+
     if (A >= 360 && G >= 1088) || A >= 1013
         % Use two segments
-        C = 2;        
+        C = 2;
     else
         % Use one segment
         C = 1;
     end
-    
+
 end
 
 
@@ -96,28 +96,28 @@ channel_interleaver_pattern = get_3GPP_channel_interleaver_pattern(E_r);
 if A <= 19 % Use PCCA-polar
     % We use 3 PC bits
     n_PC = 3;
-    
+
     % Get an information bit pattern.
     info_bit_pattern = get_3GPP_info_bit_pattern(K+n_PC, Q_N, rate_matching_pattern, mode);
-    
+
     % Get a PC bit pattern.
     if G-K+3 > 192
         PC_bit_pattern = get_PC_bit_pattern(info_bit_pattern, Q_N, n_PC, 1);
     else
         PC_bit_pattern = get_PC_bit_pattern(info_bit_pattern, Q_N, n_PC, 0);
     end
-    
+
     % Perform polar encoding.
     e = PCCA_polar_encoder(a, crc_polynomial_pattern, info_bit_pattern, PC_bit_pattern, 5, rate_matching_pattern);
-    
+
     % Perform channel interleaving.
     f = e(channel_interleaver_pattern);
-    
+
 else % Use CA-polar
-    
+
     % Get an information bit pattern.
     info_bit_pattern = get_3GPP_info_bit_pattern(K, Q_N, rate_matching_pattern, mode);
-    
+
     if C == 2
 
         info_bit_pattern2 = info_bit_pattern;
@@ -125,27 +125,34 @@ else % Use CA-polar
             % Treat the first information bit as a frozen bit
             info_bit_pattern2(find(info_bit_pattern == 1,1,'first')) = 0;
         end
-        
+
         % Perform polar encoding for first segment.
         e = CA_polar_encoder(a(1:floor(A/C)),crc_polynomial_pattern,info_bit_pattern2,rate_matching_pattern);
-        
+
         % Initialise the encoded bits. If G is odd, then the final zero
         % will remain and become a padding bit.
         f = zeros(1,G);
-        
+
         % Perform channel interleaving for first segment.
         f(1:E_r) = e(channel_interleaver_pattern);
-        
+
         % Perform polar encoding for second segment.
         e = CA_polar_encoder(a(floor(A/C)+1:A),crc_polynomial_pattern,info_bit_pattern,rate_matching_pattern);
-        
+
         % Perform channel interleaving for second segment.
         f(E_r+1:2*E_r) = e(channel_interleaver_pattern);
-        
+
     else
         % Perform polar encoding.
         e = CA_polar_encoder(a,crc_polynomial_pattern,info_bit_pattern,rate_matching_pattern);
-        
+        % Note! Testvectors!
+        dlmwrite("info_bits.csv", a);
+        dlmwrite("rate_matching_pattern.csv", rate_matching_pattern);
+        dlmwrite("info_bit_pattern.csv", info_bit_pattern);
+        dlmwrite("crc_polynomial_pattern.csv", crc_polynomial_pattern);
+        dlmwrite("q_n.csv", Q_N);
+        dlmwrite("channel_interleaver_pattern.csv", channel_interleaver_pattern);
+
         % Perform channel interleaving.
         f = e(channel_interleaver_pattern);
     end

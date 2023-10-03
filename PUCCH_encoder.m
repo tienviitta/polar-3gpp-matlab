@@ -146,15 +146,17 @@ else % Use CA-polar
         % Perform polar encoding.
         e = CA_polar_encoder(a,crc_polynomial_pattern,info_bit_pattern,rate_matching_pattern);
         % Note! Testvectors!
-        dlmwrite("info_bits.csv", a);
-        dlmwrite("rate_matching_pattern.csv", rate_matching_pattern);
-        dlmwrite("info_bit_pattern.csv", info_bit_pattern);
-        dlmwrite("crc_polynomial_pattern.csv", crc_polynomial_pattern);
-        dlmwrite("q_n.csv", Q_N);
-        dlmwrite("channel_interleaver_pattern.csv", channel_interleaver_pattern);
+        tvwrite("tv/params.txt", [A, G, C, P, K, E_r, N]);
+        tvwrite("tv/info_bits.txt", a);
+        tvwrite("tv/rate_matching_pattern.txt", rate_matching_pattern-1);
+        tvwrite("tv/info_bit_pattern.txt", info_bit_pattern);
+        tvwrite("tv/crc_polynomial_pattern.txt", crc_polynomial_pattern);
+        tvwrite("tv/polar_sequence.txt", Q_N-1);
+        tvwrite("tv/channel_interleaver_pattern.txt", channel_interleaver_pattern-1);
 
         % Perform channel interleaving.
         f = e(channel_interleaver_pattern);
+        tvwrite("tv/interl_bits.txt", f);
     end
 end
 

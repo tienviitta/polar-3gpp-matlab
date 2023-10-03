@@ -1,22 +1,21 @@
 clc
 
-% Message
+% Random Message
 %A = 1234;
 %msg = round(rand(A, 1));
-% Fixed message for CEVA XC6 DSP SW evaluation
+
+% Fixed message
 msg = [
-  1; 0; 1; 0; 1; 1; 0; 1; 1; 0; 1; 1; 0; 0; 0; 0;
-  1; 0; 1; 0; 1; 1; 1; 1; 0; 0; 1; 0; 1; 1; 0; 1;
-  0; 1; 1; 1; 0; 1; 1; 0; 0; 1; 1; 1; 1; 0; 1; 1;
-  0; 0; 1; 0; 0; 0; 1; 1; 0; 0; 1; 1; 1; 0; 0; 1;
-  1; 1; 0; 1; 1; 1; 0; 1; 0; 1; 0; 1; 1; 1; 1; 1;
-  1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 1; 1; 0; 0; 0;
+  1; 1; 0; 0; 1; 0; 1; 0; 0; 1; 1; 1; 0; 1; 1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 0; 0; 1; 1; 1; 0; 1;
+  0; 1; 1; 0; 1; 0; 1; 1; 0; 0; 1; 0; 0; 1; 0; 1; 0; 1; 1; 0; 0; 0; 1; 1; 0; 1; 1; 1; 1; 1; 1; 1;
+  1; 0; 1; 0; 1; 0; 0; 0; 1; 1; 0; 0; 1; 1; 1; 1; 1; 1; 1; 0; 1; 0; 1; 1; 1; 1; 1; 1; 0; 1; 1; 1;
+  1; 0; 1; 0; 1; 1; 0; 1; 0; 0; 1; 0; 1; 0; 0; 1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 0;
 ];
+
 l_msg = length(msg);
 
-% The CRC polynomial used with CA-polar in 3GPP PUCCH channel is
+% The CRC polynomial
 % D^11 + D^10 + D^9 + D^5 + 1
-%        1 0 9 8 7 6 5 4 3 2 1 0
 crc11 = [1 1 1 0 0 0 1 0 0 0 0 1];
 l_crc = length(crc11);
 poly = transpose(crc11);
@@ -132,6 +131,6 @@ for i = 1:step
     end
     matrix_values(i) = value;
 end
-%disp("lut:")
-%disp(dec2hex(matrix_values))
+disp("lut:")
+disp(dec2hex(matrix_values))
 

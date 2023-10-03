@@ -1,11 +1,11 @@
 function e = CA_polar_encoder(a, crc_polynomial_pattern, info_bit_pattern, rate_matching_pattern)
 % CA_POLAR_ENCODER CRC-Aided (CA) polar encoder.
-%   e = CA_POLAR_ENCODER(a, crc_polynomial_pattern, info_bit_pattern, rate_matching_pattern) 
-%   encodes the information bit sequence a, in order to obtain the encoded 
+%   e = CA_POLAR_ENCODER(a, crc_polynomial_pattern, info_bit_pattern, rate_matching_pattern)
+%   encodes the information bit sequence a, in order to obtain the encoded
 %   bit sequence e.
 %
-%   a should be a binary row vector comprising A number of bits, each 
-%   having the value 0 or 1. 
+%   a should be a binary row vector comprising A number of bits, each
+%   having the value 0 or 1.
 %
 %   crc_polynomial_pattern should be a binary row vector comprising P+1
 %   number of bits, each having the value 0 or 1. These bits parameterise a
@@ -14,10 +14,10 @@ function e = CA_polar_encoder(a, crc_polynomial_pattern, info_bit_pattern, rate_
 %   polynomial. From left to right, the bits provide the coefficients for
 %   the elements D^P, D^P-1, D^P-2, ..., D^2, D, 1.
 %
-%   info_bit_pattern should be a row vector comprising N number of logical 
-%   elements, each having the value true or false. The number of elements 
-%   in info_bit_pattern having the value true should be K, where K = A+P. 
-%   These elements having the value true identify the positions of the 
+%   info_bit_pattern should be a row vector comprising N number of logical
+%   elements, each having the value true or false. The number of elements
+%   in info_bit_pattern having the value true should be K, where K = A+P.
+%   These elements having the value true identify the positions of the
 %   information and CRC bits within the input to the polar encoder kernal.
 %
 %   rate_matching_pattern should be a row vector comprising E number of
@@ -30,13 +30,13 @@ function e = CA_polar_encoder(a, crc_polynomial_pattern, info_bit_pattern, rate_
 %
 %   See also CA_POLAR_DECODER
 %
-% Copyright © 2017 Robert G. Maunder. This program is free software: you 
-% can redistribute it and/or modify it under the terms of the GNU General 
-% Public License as published by the Free Software Foundation, either 
-% version 3 of the License, or (at your option) any later version. This 
-% program is distributed in the hope that it will be useful, but WITHOUT 
-% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
-% FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+% Copyright © 2017 Robert G. Maunder. This program is free software: you
+% can redistribute it and/or modify it under the terms of the GNU General
+% Public License as published by the Free Software Foundation, either
+% version 3 of the License, or (at your option) any later version. This
+% program is distributed in the hope that it will be useful, but WITHOUT
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 % more details.
 
 A = length(a);
@@ -57,17 +57,21 @@ end
 % Generate the CRC bits and append them to the information bits.
 G_P = get_crc_generator_matrix(A,crc_polynomial_pattern);
 b = [a, mod(a*G_P,2)];
+tvwrite("tv/info_crc_bits.txt", b);
 
-% Position the information and CRC bits within the input to the polar 
+% Position the information and CRC bits within the input to the polar
 % encoder kernal.
 u = zeros(1,N);
 u(info_bit_pattern) = b;
+tvwrite("tv/info_frozen_bits.txt", u);
 
 % Perform the polar encoder kernal operation.
 G_N = get_G_N(N);
 d = mod(u*G_N,2);
+tvwrite("tv/enc_bits.txt", d);
 
 % Extract the encoded bits from the output of the polar encoder kernal.
 e = d(rate_matching_pattern);
+tvwrite("tv/rm_bits.txt", e);
 
 end

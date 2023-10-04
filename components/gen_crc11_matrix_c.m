@@ -1,16 +1,17 @@
+clear all
+close all
 clc
 
-% Random Message
-%A = 1234;
-%msg = round(rand(A, 1));
+addpath 'components'
 
 % Fixed message
-msg = [
-  1; 1; 0; 0; 1; 0; 1; 0; 0; 1; 1; 1; 0; 1; 1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 0; 0; 1; 1; 1; 0; 1;
-  0; 1; 1; 0; 1; 0; 1; 1; 0; 0; 1; 0; 0; 1; 0; 1; 0; 1; 1; 0; 0; 0; 1; 1; 0; 1; 1; 1; 1; 1; 1; 1;
-  1; 0; 1; 0; 1; 0; 0; 0; 1; 1; 0; 0; 1; 1; 1; 1; 1; 1; 1; 0; 1; 0; 1; 1; 1; 1; 1; 1; 0; 1; 1; 1;
-  1; 0; 1; 0; 1; 1; 0; 1; 0; 0; 1; 0; 1; 0; 0; 1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 0;
-];
+%msg = [
+%  1; 1; 0; 0; 1; 0; 1; 0; 0; 1; 1; 1; 0; 1; 1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 0; 0; 1; 1; 1; 0; 1;
+%  0; 1; 1; 0; 1; 0; 1; 1; 0; 0; 1; 0; 0; 1; 0; 1; 0; 1; 1; 0; 0; 0; 1; 1; 0; 1; 1; 1; 1; 1; 1; 1;
+%  1; 0; 1; 0; 1; 0; 0; 0; 1; 1; 0; 0; 1; 1; 1; 1; 1; 1; 1; 0; 1; 0; 1; 1; 1; 1; 1; 1; 0; 1; 1; 1;
+%  1; 0; 1; 0; 1; 1; 0; 1; 0; 0; 1; 0; 1; 0; 0; 1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 0;
+%];
+msg = dlmread("tv/info_bits.txt");
 
 l_msg = length(msg);
 
@@ -43,7 +44,9 @@ crc_m(1:step-1,1) = poly(2:end);
 % Calculate matrix^step. Then the result matrix will do steps of CRC with
 % one matrix-vector multiplication
 crc_b = mod(crc_m ^ step,2);
-crc_r = mod(crc_m ^ rem(l_msg, step),2);
+step_rem = rem(l_msg, step);
+crc_r = mod(crc_m ^ step_rem,2);
+crc_r(:,end-(32-step_rem-1):end) = 0;
 
 % Compute CRC in 'step' size blocks
 crc_s = zeros(step, 1);
@@ -64,6 +67,8 @@ for i = 0:floor(l_msg / step) - 1
   printf("%d", fliplr(transpose(crc_s)));
   printf("\n");
 endfor
+
+% Compute remainder
 p_msg = [msg(floor(l_msg/step)*step+1:floor(l_msg/step)*step+rem(l_msg, step)); zeros(32-rem(l_msg,32), 1)];
 printf("enc: p_msg(%d): ", floor(l_msg/step));
 printf("%d", fliplr(transpose(p_msg)));
@@ -82,6 +87,12 @@ printf("\n");
 printf("enc: crc_s: ");
 printf("%d", fliplr(transpose(crc_s(1:l_crc-1))));
 printf("\n");
+
+if all(crc_ref == transpose(crc_s(1:l_crc-1)))
+  printf("enc: PASS\n");
+else
+  printf("enc: FAIL\n");
+endif
 
 %% Attach CRC
 %r_msg = [msg; crc_s(1:l_crc-1)];
@@ -118,6 +129,7 @@ printf("\n");
 %printf("dec: crc_s: ");
 %printf("%d", fliplr(transpose(crc_s(1:l_crc-1))));
 %printf("\n");
+
 %if sum(crc_s(1:l_crc-1)) == 0
 %  printf("dec: PASS\n");
 %else
@@ -137,9 +149,11 @@ end
 disp("lut:")
 disp(dec2hex(matrix_values))
 
+mask = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0];
 matrix_values = uint32(zeros(step,1));
 for i = 1:step
     row = crc_r(i,:);
+    %row = and(crc_r(i,:), mask);
     value = 0;
     for j=1:step
         value = value + row(j)*2^(j-1); % Note! Leftmost bit is interpreted as LSB!

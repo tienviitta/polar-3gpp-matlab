@@ -51,7 +51,8 @@ info_bit_pattern = get_3GPP_info_bit_pattern(K, Q_N, rate_matching_pattern, mode
 
 % Generate the CRC bits and append them to the information bits.
 G_P = get_crc_generator_matrix(A,crc_polynomial_pattern);
-b = [a, mod(a*G_P,2)];
+a_crc = mod(a*G_P,2);
+b = [a, a_crc];
 
 % Position the information and CRC bits within the input to the polar
 % encoder kernal.

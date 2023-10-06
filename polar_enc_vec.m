@@ -2,9 +2,15 @@ clc
 clear all
 close all
 
+addpath 'components'
+
 %%% Params
-A = 123;
+A = 123; % mode:shortening
 E = 184;
+%A = 65; % mode:puncturing
+%E = 184;
+%A = 123; % mode:repetition
+%E = 267;
 seed = 0;
 
 % Seed the random number generator
@@ -70,6 +76,7 @@ e = d(rate_matching_pattern);
 f = e(channel_interleaver_pattern);
 
 % Testvectors
+printf("Polar encoding: A:%d, G:%d, C:%d, P:%d, K:%d, E_r:%d, N:%d, mode:%s\n", A, G, C, P, K, E_r, N, mode);
 tvwrite("tv/params.txt", [A, G, C, P, K, E_r, N]);
 tvwrite("tv/info_bits.txt", a);
 tvwrite("tv/rate_matching_pattern.txt", rate_matching_pattern-1);

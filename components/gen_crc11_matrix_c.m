@@ -11,7 +11,7 @@ addpath 'components'
 %  1; 0; 1; 0; 1; 0; 0; 0; 1; 1; 0; 0; 1; 1; 1; 1; 1; 1; 1; 0; 1; 0; 1; 1; 1; 1; 1; 1; 0; 1; 1; 1;
 %  1; 0; 1; 0; 1; 1; 0; 1; 0; 0; 1; 0; 1; 0; 0; 1; 0; 1; 1; 1; 1; 0; 1; 1; 1; 0; 0;
 %];
-msg = dlmread("tv/info_bits.txt");
+msg = dlmread("tv2/info_bits.txt");
 
 l_msg = length(msg);
 
@@ -46,7 +46,7 @@ crc_m(1:step-1,1) = poly(2:end);
 crc_b = mod(crc_m ^ step,2);
 step_rem = rem(l_msg, step);
 crc_r = mod(crc_m ^ step_rem,2);
-crc_r(:,end-(32-step_rem-1):end) = 0;
+%crc_r(:,end-(32-step_rem-1):end) = 0;
 
 % Compute CRC in 'step' size blocks
 crc_s = zeros(step, 1);

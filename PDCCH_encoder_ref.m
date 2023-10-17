@@ -1,4 +1,4 @@
-function f = PDCCH_encoder(a, E, RNTI)
+function f = PDCCH_encoder_ref(a, E, RNTI, tc)
 % PDCCH_ENCODER Polar encoder for the Physical Downlink Control Channel (PDCCH) of 3GPP New
 % Radio, as defined in Section 7.3 of TS38.212. Implements the zero-
 % padding to increase the length of short payloads to 12 bits of Section 7.3.1,
@@ -93,4 +93,66 @@ Q_N = get_3GPP_sequence_pattern(N);
 info_bit_pattern = get_3GPP_info_bit_pattern(K, Q_N, rate_matching_pattern, mode);
 
 % Perform Distributed-CRC-Aided polar encoding.
-f = DS1CA_polar_encoder(a,crc_polynomial_pattern, RNTI, crc_interleaver_pattern,info_bit_pattern,rate_matching_pattern);
+%f = DS1CA_polar_encoder(a,crc_polynomial_pattern, RNTI, crc_interleaver_pattern,info_bit_pattern,rate_matching_pattern);
+%A = length(a);
+%P = length(crc_polynomial_pattern)-1;
+%K = length(crc_interleaver_pattern);
+%N = length(info_bit_pattern);
+
+%if A+P ~= K
+%    error('A+P should equal K');
+%end
+%if log2(N) ~= round(log2(N))
+%    error('N should be a power of 2');
+%end
+%if sum(info_bit_pattern) ~= K
+%    error('info_bit_pattern should contain K number of ones.');
+%end
+%if max(rate_matching_pattern) > N
+%    error('rate_matching_pattern is not compatible with N');
+%end
+%if P < length(crc_scrambling_pattern)
+%    error('polar_3gpp_matlab:UnsupportedBlockLength','K should be no less than the length of the scrambing pattern');
+%end
+
+% Generate the CRC bits.
+G_P = get_crc_generator_matrix(A+P,crc_polynomial_pattern);
+crc_bits = mod([ones(1,P),a]*G_P,2);
+
+% Scramble the CRC bits.
+scrambled_crc_bits = xor(crc_bits,[zeros(1,P-length(RNTI)),RNTI]);
+
+% Append the scrambled CRC bits to the information bits.
+b = [a, scrambled_crc_bits];
+
+% Interleave the information and CRC bits.
+c = b(crc_interleaver_pattern);
+
+% Position the information and CRC bits within the input to the polar
+% encoder kernal.
+u = zeros(1,N);
+u(info_bit_pattern) = c;
+
+% Perform the polar encoder kernal operation.
+G_N = get_G_N(N);
+d = mod(u*G_N,2);
+
+% Extract the encoded bits from the output of the polar encoder kernal.
+f = d(rate_matching_pattern);
+
+% Testvectors
+printf("Distributed-CRC-Aided Polar encoding: A:%d, P:%d, K:%d, E:%d, N:%d, mode:%s\n", A, P, K, E, N, mode);
+tvwrite([tc "/" "params.txt"], [A, P, K, E, N]);
+tvwrite([tc "/" "info_bits.txt"], a);
+tvwrite([tc "/" "rnti_bits.txt"], RNTI);
+tvwrite([tc "/" "crc_interleaver_pattern.txt"], crc_interleaver_pattern);
+tvwrite([tc "/" "rate_matching_pattern.txt"], rate_matching_pattern);
+tvwrite([tc "/" "info_bit_pattern.txt"], info_bit_pattern);
+tvwrite([tc "/" "crc_bits.txt"], crc_bits);
+tvwrite([tc "/" "scrambled_crc_bits.txt"], scrambled_crc_bits);
+tvwrite([tc "/" "info_crc_bits.txt"], b);
+tvwrite([tc "/" "info_intrl_bits.txt"], c);
+tvwrite([tc "/" "frozen_bits.txt"], u);
+tvwrite([tc "/" "enc_bits.txt"], d);
+tvwrite([tc "/" "rm_bits.txt"], f);
+

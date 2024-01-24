@@ -56,9 +56,9 @@ f2_tilde(2:2:end) = -4*sqrt(1/2)*imag(rx)/N0;
 f_tilde = f2_tilde(1:length(f));
 
 % Perform polar decoding
-L = 4;
+L = 1;
 min_sum = true;
-a_hat = PDCCH_decoder_ref(f_tilde, A, L, min_sum, RNTI);
+a_hat = PDCCH_decoder_ref(f_tilde, A, L, min_sum, RNTI, tc);
 
 % Check results
 errs = sum(abs(a_hat - a));

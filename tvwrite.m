@@ -10,7 +10,8 @@ fid = fopen(fn, "w");
 % Write scalar vector to a file line by line
 l_tv = length(tv);
 for i = 1:l_tv
-  fprintf(fid, "%d\n", tv(i));
+  %fprintf(fid, "%d\n", tv(i));
+  fprintf(fid, "%d, ", tv(i));
 endfor
 
 % Close file

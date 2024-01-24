@@ -142,19 +142,19 @@ f = d(rate_matching_pattern);
 
 % Testvectors
 printf("Distributed-CRC-Aided Polar encoding: A:%d, P:%d, K:%d, E:%d, N:%d, mode:%s\n", A, P, K, E, N, mode);
-tvwrite([tc "/" "params.txt"], [A, P, K, E, N]);
-tvwrite([tc "/" "info_bits.txt"], a);
-tvwrite([tc "/" "crc_gen_m.txt"], G_P(:));
+tvwrite([tc "/" "enc_params.txt"], [A, P, K, E, N]);
+tvwrite([tc "/" "enc_info_bits.txt"], a);
+tvwrite([tc "/" "enc_crc_gen_m.txt"], G_P(:));
 tvwrite([tc "/" "enc_gen_m.txt"], G_N(:));
-tvwrite([tc "/" "rnti_bits.txt"], RNTI);
-tvwrite([tc "/" "crc_interleaver_pattern.txt"], crc_interleaver_pattern-1);
-tvwrite([tc "/" "rate_matching_pattern.txt"], rate_matching_pattern-1);
-tvwrite([tc "/" "info_bit_pattern.txt"], info_bit_pattern);
-tvwrite([tc "/" "crc_bits.txt"], crc_bits);
-tvwrite([tc "/" "scrambled_crc_bits.txt"], scrambled_crc_bits);
-tvwrite([tc "/" "info_crc_bits.txt"], b);
-tvwrite([tc "/" "info_intrl_bits.txt"], c);
-tvwrite([tc "/" "frozen_bits.txt"], u);
+tvwrite([tc "/" "enc_rnti_bits.txt"], RNTI);
+tvwrite([tc "/" "enc_crc_interleaver_pattern.txt"], crc_interleaver_pattern-1);
+tvwrite([tc "/" "enc_rate_matching_pattern.txt"], rate_matching_pattern-1);
+tvwrite([tc "/" "enc_info_bit_pattern.txt"], info_bit_pattern);
+tvwrite([tc "/" "enc_crc_bits.txt"], crc_bits);
+tvwrite([tc "/" "enc_scrambled_crc_bits.txt"], scrambled_crc_bits);
+tvwrite([tc "/" "enc_info_crc_bits.txt"], b);
+tvwrite([tc "/" "enc_info_intrl_bits.txt"], c);
+tvwrite([tc "/" "enc_frozen_bits.txt"], u);
 tvwrite([tc "/" "enc_bits.txt"], d);
-tvwrite([tc "/" "rm_bits.txt"], f);
+tvwrite([tc "/" "enc_rm_bits.txt"], f);
 

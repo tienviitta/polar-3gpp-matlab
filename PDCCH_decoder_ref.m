@@ -1,4 +1,4 @@
-function a_hat = PDCCH_decoder_ref(f_tilde, A, L, min_sum, RNTI)
+function a_hat = PDCCH_decoder_ref(f_tilde, A, L, min_sum, RNTI, tc)
 % PDCCH_DECODER Polar decoder for the Physical Downlink Control Channel (PDCCH) of 3GPP New
 % Radio, as defined in Section 7.3 of TS38.212. Implements the zero-
 % padding to increase the length of short payloads to 12 bits of Section 7.3.1,
@@ -275,6 +275,10 @@ for i = 1:N
 end
 
 %% Information bit extraction
+tvwrite([tc "/" "dec_params.txt"], [A, P, K, E, N]);
+tvwrite([tc "/" "dec_info_bit_pattern.txt"], info_bit_pattern);
+d_tilde(d_tilde == Inf) = 255.0;
+tvwrite([tc "/" "dec_llrs.txt"], d_tilde);
 
 % We use the list entry with a passing CRC that has the best metric. But we
 % only consider the best min(L,2^P2) entries in the list, to avoid

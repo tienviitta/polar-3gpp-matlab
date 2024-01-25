@@ -291,10 +291,12 @@ for list_index = 1:min(L,2^P2)
     % We already checked the CRC during the SCL decoding process.
     if crc_okay(max_indices(list_index))
         u_hat = bits(:,1,max_indices(list_index))';
+        tvwrite([tc "/" "dec_bits.txt"], u_hat);
 
         % Extract the information bits from the output of the polar decoder
         % kernal.
         c_hat = u_hat(info_bit_pattern);
+        tvwrite([tc "/" "dec_info_bits.txt"], c_hat);
 
         % Deinterleave the information and CRC bits.
         b_hat(crc_interleaver_pattern) = c_hat;

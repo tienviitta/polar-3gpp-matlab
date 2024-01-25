@@ -18,11 +18,15 @@ switch tc
     EsN0 = 7;
     tc = "dl/tv1";
   case 2
-    % mode:repetition
-    A = 134;
+    A = 65;
     E = 268;
     EsN0 = 1;
     tc = "dl/tv2";
+  case 3
+    A = 140;
+    E = 384;
+    EsN0 = 6;
+    tc = "dl/tv3";
 end
 
 % N0
@@ -56,7 +60,7 @@ f2_tilde(2:2:end) = -4*sqrt(1/2)*imag(rx)/N0;
 f_tilde = f2_tilde(1:length(f));
 
 % Perform polar decoding
-L = 1;
+L = 4;
 min_sum = true;
 a_hat = PDCCH_decoder_ref(f_tilde, A, L, min_sum, RNTI, tc);
 

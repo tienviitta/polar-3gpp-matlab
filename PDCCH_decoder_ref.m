@@ -165,9 +165,10 @@ else
         % doesn't know if they have values of 0 or 1.
         d_tilde = zeros(1,N);
     elseif strcmp(mode,'shortening')
-        % Infinite valued LLRs are used for shortened bits, because the
+        % Infinite valued LLRs (255) are used for shortened bits, because the
         % decoder knows that they have values of 0.
-        d_tilde = inf(1,N);
+        %d_tilde = inf(1,N);
+        d_tilde = 255 * ones(1,N);
     else
         error('Unknown rate matching mode');
     end
@@ -277,7 +278,6 @@ end
 %% Information bit extraction
 tvwrite([tc "/" "dec_params.txt"], [A, P, K, E, N]);
 tvwrite([tc "/" "dec_info_bit_pattern.txt"], info_bit_pattern);
-d_tilde(d_tilde == Inf) = 255.0;
 tvwrite([tc "/" "dec_llrs.txt"], d_tilde);
 
 % We use the list entry with a passing CRC that has the best metric. But we
@@ -291,7 +291,9 @@ for list_index = 1:min(L,2^P2)
     % We already checked the CRC during the SCL decoding process.
     if crc_okay(max_indices(list_index))
         u_hat = bits(:,1,max_indices(list_index))';
+        u_ext = llrs(:,1,max_indices(list_index))';
         tvwrite([tc "/" "dec_bits.txt"], u_hat);
+        tvwrite([tc "/" "dec_exts.txt"], u_ext);
 
         % Extract the information bits from the output of the polar decoder
         % kernal.
